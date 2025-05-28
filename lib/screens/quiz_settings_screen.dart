@@ -28,16 +28,22 @@ class _QuizSettingsScreenState extends State<QuizSettingsScreen> {
     setState(() {});
   }
 
+  // ... (imports et extension StringExtension inchangés)
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Quiz Settings')),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(20.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            DropdownButton<int>(
-              hint: const Text('Select Category'),
+            const Text('Select Category',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            DropdownButtonFormField<int>(
+              decoration: const InputDecoration(border: OutlineInputBorder()),
               value: selectedCategoryId,
               items: categories
                   .map((category) => DropdownMenuItem(
@@ -45,29 +51,29 @@ class _QuizSettingsScreenState extends State<QuizSettingsScreen> {
                         child: Text(category.name),
                       ))
                   .toList(),
-              onChanged: (value) {
-                setState(() {
-                  selectedCategoryId = value;
-                });
-              },
+              onChanged: (value) => setState(() => selectedCategoryId = value),
             ),
-            DropdownButton<String>(
-              hint: const Text('Select Difficulty'),
+            const SizedBox(height: 20),
+            const Text('Select Difficulty',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            DropdownButtonFormField<String>(
+              decoration: const InputDecoration(border: OutlineInputBorder()),
               value: selectedDifficulty,
               items: ['easy', 'medium', 'hard']
                   .map((difficulty) => DropdownMenuItem(
                         value: difficulty,
-                        child: Text(difficulty.capitalize()),
+                        child: Text(difficulty),
                       ))
                   .toList(),
-              onChanged: (value) {
-                setState(() {
-                  selectedDifficulty = value!;
-                });
-              },
+              onChanged: (value) => setState(() => selectedDifficulty = value!),
             ),
-            DropdownButton<int>(
-              hint: const Text('Number of Questions'),
+            const SizedBox(height: 20),
+            const Text('Number of Questions',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            DropdownButtonFormField<int>(
+              decoration: const InputDecoration(border: OutlineInputBorder()),
               value: selectedQuestionCount,
               items: [5, 10, 15]
                   .map((count) => DropdownMenuItem(
@@ -75,14 +81,18 @@ class _QuizSettingsScreenState extends State<QuizSettingsScreen> {
                         child: Text('$count Questions'),
                       ))
                   .toList(),
-              onChanged: (value) {
-                setState(() {
-                  selectedQuestionCount = value!;
-                });
-              },
+              onChanged: (value) =>
+                  setState(() => selectedQuestionCount = value!),
             ),
-            const SizedBox(height: 20),
-            ElevatedButton(
+            const SizedBox(height: 30),
+            ElevatedButton.icon(
+              icon: const Icon(Icons.play_circle_fill),
+              label: const Text('Start Quiz'),
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size.fromHeight(50),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+              ),
               onPressed: selectedCategoryId != null
                   ? () {
                       Navigator.push(
@@ -97,18 +107,10 @@ class _QuizSettingsScreenState extends State<QuizSettingsScreen> {
                       );
                     }
                   : null,
-              child: const Text('Start Quiz'),
             ),
           ],
         ),
       ),
     );
-  }
-}
-
-// Extension to capitalize strings
-extension StringExtension on String {
-  String capitalize() {
-    return "${this[0].toUpperCase()}${substring(1)}";
   }
 }

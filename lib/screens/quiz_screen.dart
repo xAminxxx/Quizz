@@ -76,8 +76,11 @@ class _QuizScreenState extends State<QuizScreen> {
           appBar: AppBar(
             title: Selector<QuizProvider, int>(
               selector: (_, provider) => provider.currentQuestionIndex,
-              builder: (context, currentQuestionIndex, _) {
-                return Text('Question ${currentQuestionIndex + 1}');
+              builder: (context, index, _) {
+                final total = Provider.of<QuizProvider>(context, listen: false)
+                    .questions
+                    .length;
+                return Text('Question ${index + 1}/$total');
               },
             ),
             actions: [
@@ -86,7 +89,13 @@ class _QuizScreenState extends State<QuizScreen> {
                 child: Selector<QuizProvider, int>(
                   selector: (_, provider) => provider.timeLeft,
                   builder: (context, timeLeft, _) {
-                    return Text('Time: ${timeLeft}s');
+                    return Row(
+                      children: [
+                        const Icon(Icons.timer, size: 18),
+                        const SizedBox(width: 4),
+                        Text('$timeLeft s'),
+                      ],
+                    );
                   },
                 ),
               ),
@@ -109,32 +118,49 @@ class _QuizScreenState extends State<QuizScreen> {
                 selectedAnswer: provider.selectedAnswer,
               ),
               builder: (context, data, _) {
+                final theme = Theme.of(context);
                 final question = data.question;
                 final answers = data.answers;
                 final isAnswered = data.isAnswered;
                 final selectedAnswer = data.selectedAnswer;
 
-                return Column(
-                  children: [
-                    Text(
-                      question.question,
-                      style: const TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 20),
-                    ...answers.map((answer) => Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: isAnswered
-                                  ? (answer == question.correctAnswer
-                                      ? Colors.green
-                                      : (answer == selectedAnswer
-                                          ? Colors.red
-                                          : null))
-                                  : null,
-                            ),
-                            onPressed: isAnswered
+                return SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        question.question,
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      ...answers.map((answer) {
+                        final isCorrect = answer == question.correctAnswer;
+                        final isSelected = answer == selectedAnswer;
+
+                        Color? backgroundColor;
+                        Icon? icon;
+
+                        if (isAnswered) {
+                          if (isCorrect) {
+                            backgroundColor = Colors.green[400];
+                            icon = const Icon(Icons.check, color: Colors.white);
+                          } else if (isSelected) {
+                            backgroundColor = Colors.red[400];
+                            icon = const Icon(Icons.close, color: Colors.white);
+                          }
+                        }
+
+                        return Card(
+                          color: backgroundColor,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: ListTile(
+                            leading: icon,
+                            title: Text(answer),
+                            onTap: isAnswered
                                 ? null
                                 : () async {
                                     if (!kIsWeb &&
@@ -144,6 +170,7 @@ class _QuizScreenState extends State<QuizScreen> {
                                     Provider.of<QuizProvider>(context,
                                             listen: false)
                                         .answerQuestion(answer);
+
                                     Future.delayed(const Duration(seconds: 1),
                                         () {
                                       final quizProvider =
@@ -163,16 +190,26 @@ class _QuizScreenState extends State<QuizScreen> {
                                       }
                                     });
                                   },
-                            child: AnimatedScale(
-                              scale: isAnswered && selectedAnswer == answer
-                                  ? 1.1
-                                  : 1.0,
-                              duration: const Duration(milliseconds: 100),
-                              child: Text(answer),
-                            ),
                           ),
-                        )),
-                  ],
+                        );
+                      }),
+                      const SizedBox(height: 20),
+                      LinearProgressIndicator(
+                        value: (Provider.of<QuizProvider>(context)
+                                    .currentQuestionIndex +
+                                1) /
+                            Provider.of<QuizProvider>(context).questions.length,
+                      ),
+                      const SizedBox(height: 8),
+                      Center(
+                        child: Text(
+                          'Score: ${Provider.of<QuizProvider>(context).score}',
+                          style: theme.textTheme.bodyLarge!
+                              .copyWith(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
+                  ),
                 );
               },
             ),
