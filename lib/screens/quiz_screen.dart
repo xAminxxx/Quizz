@@ -3,13 +3,15 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vibration/vibration.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 import '../services/api_service.dart';
+import '../services/score_service.dart';
+import '../models/question.dart';
+import '../models/score.dart';
 import '../providers/quiz_provider.dart';
 import 'result_screen.dart';
-import '../models/question.dart';
-import '../services/score_service.dart';
-import '../models/score.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class QuizScreen extends StatefulWidget {
   final int categoryId;
@@ -17,15 +19,16 @@ class QuizScreen extends StatefulWidget {
   final int questionCount;
   final String categoryName;
 
-  const QuizScreen(
-      {super.key,
-      required this.categoryId,
-      required this.difficulty,
-      required this.questionCount,
-      required this.categoryName});
+  const QuizScreen({
+    super.key,
+    required this.categoryId,
+    required this.difficulty,
+    required this.questionCount,
+    required this.categoryName,
+  });
 
   @override
-  _QuizScreenState createState() => _QuizScreenState();
+  State<QuizScreen> createState() => _QuizScreenState();
 }
 
 class _QuizScreenState extends State<QuizScreen> {
@@ -69,6 +72,7 @@ class _QuizScreenState extends State<QuizScreen> {
   @override
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context)!;
+
     return Selector<QuizProvider, bool>(
       selector: (_, provider) => provider.questions.isEmpty,
       builder: (context, isQuestionsEmpty, _) {
@@ -158,14 +162,25 @@ class _QuizScreenState extends State<QuizScreen> {
                           }
                         }
 
-                        return Card(
-                          color: backgroundColor,
+                        Widget answerCard = Card(
+                          color: backgroundColor ??
+                              Theme.of(context)
+                                  .colorScheme
+                                  .surfaceContainerHighest
+                                  .withOpacity(0.8),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: ListTile(
                             leading: icon,
-                            title: Text(answer),
+                            title: Text(
+                              answer,
+                              style: TextStyle(
+                                color: isAnswered
+                                    ? Colors.white
+                                    : Theme.of(context).colorScheme.onSurface,
+                              ),
+                            ),
                             onTap: isAnswered
                                 ? null
                                 : () async {
@@ -188,8 +203,7 @@ class _QuizScreenState extends State<QuizScreen> {
                                     } else {
                                       final scoreService = ScoreService();
                                       await scoreService.saveScore(Score(
-                                        category: widget
-                                            .categoryName, // ✅ now it's readable
+                                        category: widget.categoryName,
                                         difficulty: widget.difficulty,
                                         score: quizProvider.score,
                                         timestamp: DateTime.now(),
@@ -210,19 +224,34 @@ class _QuizScreenState extends State<QuizScreen> {
                                   },
                           ),
                         );
+
+                        // Only animate the selected answer
+                        if (isAnswered && selectedAnswer == answer) {
+                          answerCard = answerCard
+                              .animate()
+                              .scale(
+                                  duration: 400.ms,
+                                  curve: Curves.easeOut,
+                                  begin: const Offset(1, 1),
+                                  end: const Offset(1.08, 1.08))
+                              .fadeIn(duration: 300.ms);
+                        }
+
+                        return answerCard;
                       }),
                       const SizedBox(height: 20),
                       LinearProgressIndicator(
-                        value: (Provider.of<QuizProvider>(context)
-                                .currentQuestionIndex) /
+                        value: Provider.of<QuizProvider>(context)
+                                .currentQuestionIndex /
                             Provider.of<QuizProvider>(context).questions.length,
                       ),
                       const SizedBox(height: 8),
                       Center(
                         child: Text(
                           '${t.scoreLabel}: ${Provider.of<QuizProvider>(context).score}',
-                          style: theme.textTheme.bodyLarge!
-                              .copyWith(fontWeight: FontWeight.bold),
+                          style: theme.textTheme.bodyLarge!.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ],

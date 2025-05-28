@@ -24,7 +24,10 @@ class HomeScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.quiz, size: 100, color: theme.primaryColor),
+              Image.asset(
+                'assets/images/logo.png',
+                height: 120,
+              ),
               const SizedBox(height: 40),
 
               // Start Quiz

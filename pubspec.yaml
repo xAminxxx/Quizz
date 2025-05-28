@@ -21,6 +21,9 @@ dependencies:
   audioplayers: ^6.1.0
   html: ^0.15.4
   url_launcher: ^6.2.5
+  flutter_animate: ^4.5.0
+  confetti: ^0.7.0 # pour 🎊 confettis
+  lottie: ^2.7.0 # pour animations JSON stylées
 
 dev_dependencies:
   flutter_test:
@@ -31,8 +34,7 @@ flutter:
   uses-material-design: true
   generate: true
   assets:
-    - assets/fonts/
-    - assets/icons/
+    - assets/images/
 
 flutter_gen:
   output: lib/gen/
