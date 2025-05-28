@@ -7,18 +7,21 @@ import '../services/api_service.dart';
 import '../providers/quiz_provider.dart';
 import 'result_screen.dart';
 import '../models/question.dart';
+import '../services/score_service.dart';
+import '../models/score.dart';
 
 class QuizScreen extends StatefulWidget {
   final int categoryId;
   final String difficulty;
   final int questionCount;
+  final String categoryName;
 
-  const QuizScreen({
-    super.key,
-    required this.categoryId,
-    required this.difficulty,
-    required this.questionCount,
-  });
+  const QuizScreen(
+      {super.key,
+      required this.categoryId,
+      required this.difficulty,
+      required this.questionCount,
+      required this.categoryName});
 
   @override
   _QuizScreenState createState() => _QuizScreenState();
@@ -167,32 +170,40 @@ class _QuizScreenState extends State<QuizScreen> {
                                         (await Vibration.hasVibrator())) {
                                       Vibration.vibrate(duration: 100);
                                     }
-                                    Provider.of<QuizProvider>(context,
-                                            listen: false)
-                                        .answerQuestion(answer);
 
-                                    Future.delayed(const Duration(seconds: 1),
-                                        () {
-                                      final quizProvider =
-                                          Provider.of<QuizProvider>(context,
-                                              listen: false);
-                                      if (quizProvider.currentQuestionIndex <
-                                          quizProvider.questions.length - 1) {
-                                        quizProvider.nextQuestion();
-                                      } else {
-                                        Navigator.pushReplacement(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (_) => ResultScreen(
-                                              categoryId: widget.categoryId,
-                                              difficulty: widget.difficulty,
-                                              questionCount:
-                                                  widget.questionCount,
-                                            ),
+                                    final quizProvider =
+                                        Provider.of<QuizProvider>(context,
+                                            listen: false);
+                                    quizProvider.answerQuestion(answer);
+
+                                    await Future.delayed(
+                                        const Duration(seconds: 1));
+
+                                    if (quizProvider.currentQuestionIndex <
+                                        quizProvider.questions.length - 1) {
+                                      quizProvider.nextQuestion();
+                                    } else {
+                                      final scoreService = ScoreService();
+                                      await scoreService.saveScore(Score(
+                                        category: widget
+                                            .categoryName, // ✅ now it's readable
+                                        difficulty: widget.difficulty,
+                                        score: quizProvider.score,
+                                        timestamp: DateTime.now(),
+                                      ));
+
+                                      Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => ResultScreen(
+                                            categoryId: widget.categoryId,
+                                            difficulty: widget.difficulty,
+                                            questionCount: widget.questionCount,
+                                            categoryName: widget.categoryName,
                                           ),
-                                        );
-                                      }
-                                    });
+                                        ),
+                                      );
+                                    }
                                   },
                           ),
                         );

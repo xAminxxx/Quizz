@@ -8,12 +8,14 @@ class ResultScreen extends StatelessWidget {
   final int categoryId;
   final String difficulty;
   final int questionCount;
+  final String categoryName;
 
   const ResultScreen({
     super.key,
     required this.categoryId,
     required this.difficulty,
     required this.questionCount,
+    required this.categoryName,
   });
 
   @override
@@ -115,6 +117,7 @@ class ResultScreen extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                           builder: (_) => QuizScreen(
+                            categoryName: categoryName,
                             categoryId: categoryId,
                             difficulty: difficulty,
                             questionCount: questionCount,

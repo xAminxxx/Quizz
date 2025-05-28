@@ -100,6 +100,10 @@ class _QuizSettingsScreenState extends State<QuizSettingsScreen> {
                         MaterialPageRoute(
                           builder: (_) => QuizScreen(
                             categoryId: selectedCategoryId!,
+                            categoryName: categories
+                                .firstWhere(
+                                    (cat) => cat.id == selectedCategoryId!)
+                                .name,
                             difficulty: selectedDifficulty,
                             questionCount: selectedQuestionCount,
                           ),
