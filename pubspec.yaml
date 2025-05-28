@@ -1,0 +1,28 @@
+name: quizz
+description: "A new Flutter project."
+publish_to: "none"
+version: 0.1.0
+
+environment:
+  sdk: ^3.5.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+  http: ^1.2.2 # For API calls to OpenTDB
+  shared_preferences: ^2.3.0 # For local score storage
+  flutter_local_notifications: ^18.0.0 # For push notifications
+  vibration: ^2.0.0 # For vibration feedback
+  provider: ^6.1.2 # For state management
+  get: ^4.7.2 # For navigation and state (optional, simplifies navigation)
+  intl: ^0.19.0 # For formatting (e.g., timer)
+  audioplayers: ^6.1.0
+  html: ^0.15.4
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
