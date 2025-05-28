@@ -183,8 +183,12 @@ class _QuizScreenState extends State<QuizScreen> {
                                         Navigator.pushReplacement(
                                           context,
                                           MaterialPageRoute(
-                                            builder: (_) =>
-                                                const ResultScreen(),
+                                            builder: (_) => ResultScreen(
+                                              categoryId: widget.categoryId,
+                                              difficulty: widget.difficulty,
+                                              questionCount:
+                                                  widget.questionCount,
+                                            ),
                                           ),
                                         );
                                       }
@@ -196,8 +200,7 @@ class _QuizScreenState extends State<QuizScreen> {
                       const SizedBox(height: 20),
                       LinearProgressIndicator(
                         value: (Provider.of<QuizProvider>(context)
-                                    .currentQuestionIndex +
-                                1) /
+                                .currentQuestionIndex) /
                             Provider.of<QuizProvider>(context).questions.length,
                       ),
                       const SizedBox(height: 8),
