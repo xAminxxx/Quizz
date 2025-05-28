@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../services/api_service.dart';
 import '../models/category.dart';
 import 'quiz_screen.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class QuizSettingsScreen extends StatefulWidget {
   const QuizSettingsScreen({super.key});
@@ -32,15 +33,17 @@ class _QuizSettingsScreenState extends State<QuizSettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(title: const Text('Quiz Settings')),
+      appBar: AppBar(title: Text(t.quizSettings)),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text('Select Category',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            Text(t.selectCategory,
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             DropdownButtonFormField<int>(
               decoration: const InputDecoration(border: OutlineInputBorder()),
@@ -54,8 +57,9 @@ class _QuizSettingsScreenState extends State<QuizSettingsScreen> {
               onChanged: (value) => setState(() => selectedCategoryId = value),
             ),
             const SizedBox(height: 20),
-            const Text('Select Difficulty',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            Text(t.selectDifficulty,
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             DropdownButtonFormField<String>(
               decoration: const InputDecoration(border: OutlineInputBorder()),
@@ -63,14 +67,21 @@ class _QuizSettingsScreenState extends State<QuizSettingsScreen> {
               items: ['easy', 'medium', 'hard']
                   .map((difficulty) => DropdownMenuItem(
                         value: difficulty,
-                        child: Text(difficulty),
+                        child: Text(
+                          difficulty == 'easy'
+                              ? t.difficultyEasy
+                              : difficulty == 'medium'
+                                  ? t.difficultyMedium
+                                  : t.difficultyHard,
+                        ),
                       ))
                   .toList(),
               onChanged: (value) => setState(() => selectedDifficulty = value!),
             ),
             const SizedBox(height: 20),
-            const Text('Number of Questions',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            Text(t.numberOfQuestions,
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             DropdownButtonFormField<int>(
               decoration: const InputDecoration(border: OutlineInputBorder()),
@@ -78,7 +89,7 @@ class _QuizSettingsScreenState extends State<QuizSettingsScreen> {
               items: [5, 10, 15]
                   .map((count) => DropdownMenuItem(
                         value: count,
-                        child: Text('$count Questions'),
+                        child: Text('$count ${t.questionsLabel}'),
                       ))
                   .toList(),
               onChanged: (value) =>
@@ -87,7 +98,7 @@ class _QuizSettingsScreenState extends State<QuizSettingsScreen> {
             const SizedBox(height: 30),
             ElevatedButton.icon(
               icon: const Icon(Icons.play_circle_fill),
-              label: const Text('Start Quiz'),
+              label: Text(t.startQuiz),
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size.fromHeight(50),
                 shape: RoundedRectangleBorder(

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../providers/quiz_provider.dart';
 import 'home_screen.dart';
 import 'quiz_screen.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ResultScreen extends StatelessWidget {
   final int categoryId;
@@ -20,6 +21,7 @@ class ResultScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
     final quizProvider = Provider.of<QuizProvider>(context);
     final score = quizProvider.score;
     final total = quizProvider.questions.length;
@@ -29,7 +31,7 @@ class ResultScreen extends StatelessWidget {
     final colorScheme = theme.colorScheme;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Quiz Results')),
+      appBar: AppBar(title: Text(t.quizResults)),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -40,7 +42,7 @@ class ResultScreen extends StatelessWidget {
               color: passed ? colorScheme.primary : colorScheme.error,
             ),
             const SizedBox(height: 16),
-            Text('Your Score', style: theme.textTheme.titleMedium),
+            Text(t.yourScore, style: theme.textTheme.titleMedium),
             Text(
               '$score / $total',
               style: theme.textTheme.headlineMedium?.copyWith(
@@ -69,9 +71,10 @@ class ResultScreen extends StatelessWidget {
                       subtitle: Text.rich(
                         TextSpan(
                           children: [
-                            const TextSpan(
-                              text: 'Correct Answer: ',
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                            TextSpan(
+                              text: '${t.correctAnswer}: ',
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
                             ),
                             TextSpan(
                               text: question.correctAnswer,
@@ -98,7 +101,7 @@ class ResultScreen extends StatelessWidget {
                       );
                     },
                     icon: const Icon(Icons.home),
-                    label: const Text('Back to Home'),
+                    label: Text(t.backToHome),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: colorScheme.primary,
                       foregroundColor: colorScheme.onPrimary,
@@ -126,7 +129,7 @@ class ResultScreen extends StatelessWidget {
                       );
                     },
                     icon: const Icon(Icons.replay),
-                    label: const Text('Retry Quiz'),
+                    label: Text(t.retryQuiz),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.orange,
                       foregroundColor: Colors.white,

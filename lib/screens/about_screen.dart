@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AboutScreen extends StatelessWidget {
   const AboutScreen({super.key});
@@ -14,9 +15,10 @@ class AboutScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final t = AppLocalizations.of(context)!;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('About')),
+      appBar: AppBar(title: Text(t.about)),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
         child: Column(
@@ -25,14 +27,14 @@ class AboutScreen extends StatelessWidget {
             Icon(Icons.quiz, size: 80, color: theme.colorScheme.primary),
             const SizedBox(height: 20),
             Text(
-              'Quiz App',
+              t.appTitle,
               style: theme.textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 12),
             Text(
-              'This app allows users to play interactive quizzes across various categories, difficulties, and question counts.',
+              t.aboutDescription,
               style: theme.textTheme.bodyLarge,
             ),
             const SizedBox(height: 16),
@@ -44,7 +46,7 @@ class AboutScreen extends StatelessWidget {
                   child: GestureDetector(
                     onTap: _launchOpenTDB,
                     child: Text(
-                      'Powered by Open Trivia Database',
+                      t.apiSource,
                       style: theme.textTheme.bodyLarge?.copyWith(
                         color: theme.colorScheme.primary,
                         decoration: TextDecoration.underline,
@@ -57,11 +59,11 @@ class AboutScreen extends StatelessWidget {
             const SizedBox(height: 40),
             const Divider(),
             Text(
-              'Created by Your Team or Name',
+              t.createdBy,
               style: theme.textTheme.bodySmall,
             ),
             Text(
-              '© 2025 • Mobile Programming Mini-Project',
+              '© 2025 • ${t.projectNote}',
               style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey),
             ),
           ],

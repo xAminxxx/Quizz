@@ -9,6 +9,7 @@ import 'result_screen.dart';
 import '../models/question.dart';
 import '../services/score_service.dart';
 import '../models/score.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class QuizScreen extends StatefulWidget {
   final int categoryId;
@@ -38,6 +39,7 @@ class _QuizScreenState extends State<QuizScreen> {
   }
 
   Future<void> _fetchQuestions() async {
+    Provider.of<QuizProvider>(context, listen: false).setQuestions([]);
     final apiService = ApiService();
     final questions = await apiService.fetchQuestions(
       amount: widget.questionCount,
@@ -66,6 +68,7 @@ class _QuizScreenState extends State<QuizScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
     return Selector<QuizProvider, bool>(
       selector: (_, provider) => provider.questions.isEmpty,
       builder: (context, isQuestionsEmpty, _) {
@@ -83,7 +86,7 @@ class _QuizScreenState extends State<QuizScreen> {
                 final total = Provider.of<QuizProvider>(context, listen: false)
                     .questions
                     .length;
-                return Text('Question ${index + 1}/$total');
+                return Text('${t.questionCounter} ${index + 1}/$total');
               },
             ),
             actions: [
@@ -217,7 +220,7 @@ class _QuizScreenState extends State<QuizScreen> {
                       const SizedBox(height: 8),
                       Center(
                         child: Text(
-                          'Score: ${Provider.of<QuizProvider>(context).score}',
+                          '${t.scoreLabel}: ${Provider.of<QuizProvider>(context).score}',
                           style: theme.textTheme.bodyLarge!
                               .copyWith(fontWeight: FontWeight.bold),
                         ),
