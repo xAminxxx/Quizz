@@ -1,3 +1,3 @@
 # quizz
 
-A new Flutter project.
+A Flutter quiz using openTDB api project.
